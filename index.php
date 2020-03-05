@@ -1,13 +1,48 @@
+<?php require_once 'Mobile_Detect.php';?>
+<?php include_once 'browser.php';?>
+<?php include_once 'geo.php';?>
+<?php
+$detect = new Mobile_Detect;
+if ($detect->isMobile()) {
+
+} else if ($detect->isTablet()) {
+
+} else {
+
+}
+
+$devide_os = '';
+
+if ($detect->isIOS) {
+    $devide_os = 'iOS';
+}
+if ($detect->isAndroidOS()) {
+    $devide_os = 'AndroidOS';
+}
+
+$brand = '';
+
+$brand_list = $detect->getPhoneDevices();
+
+foreach ($brand_list as $key => $value) {
+    if ($detect->is($key)) {
+        $brand = $key;
+        break;
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
 <title>Tedshd - Version</title>
 <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
-<meta name="description" content="">
-<meta name="keywords" content="">
-<script src="https://rawgithub.com/tedshd/device.js/master/lib/device.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script src="check_browser.js"></script>
+<script src="mobile-detect.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -19,15 +54,26 @@
 
 </script>
 <style>
+    * {
+        font-family: Helvetica, Microsoft JhengHei, Roboto, sans-serif, Arial, monospace, Tahoma, Geneva !important;
+    }
     body {
         background: #000;
-        color: #00ff00;
-        line-height: 1.3;
-        letter-spacing: 2px;
-	font-family: Microsoft JhengHei, San Francisco, Heiti TC, Helvetica Neue, Arial, Tahoma, Geneva, sans-serif;
-    }
-    .highlight {
         color: #fff;
+        line-height: 1.5;
+        letter-spacing: 2px;
+        font-size: 1.25rem;
+    }
+    h1,
+    h2 {
+        color: #00ff00;
+    }
+    h1 {
+        margin-bottom: 1rem;
+        font-size: 2rem;
+    }
+    h2 {
+        display: inline-block;
     }
     /* 1 dpr */
     @media
@@ -85,297 +131,124 @@
 </style>
 </head>
 <body>
-    <h1>Version: 0.20151023 Beta</h1>
-<?php
-// echo "USER AGENT : ". $_SERVER['HTTP_USER_AGENT'];
-?>
-<div>
-    USER AGENT : <span class="highlight"><?php echo $_SERVER['HTTP_USER_AGENT']; ?></span>
-</div>
-<?php
-// include_once('geoip.inc');
-if ($_SERVER['HTTP_CLIENT_IP']) { // check ip from share internet
-    $ip = $_SERVER['HTTP_CLIENT_IP'];
-} elseif ($_SERVER['HTTP_X_FORWARDED_FOR']) { // to check ip is pass from proxy
-    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-} else {
-    $ip = $_SERVER['REMOTE_ADDR'];
-}
-/*
-if((strpos($ip, ":") === false)) {
-    //ipv4
-    $gi = geoip_open("/usr/share/GeoIP/GeoIP.dat",GEOIP_STANDARD);
-    $country = geoip_country_code_by_addr($gi, $ip);
-    $ip_type = "IPv4";
-}
-else {
-    //ipv6
-    $gi = geoip_open("/usr/share/GeoIP/GeoIPv6.dat",GEOIP_STANDARD);
-    $country = geoip_country_code_by_addr_v6($gi, $ip);
-    $ip_type = "IPv6";
-}
-*/
-$geo = [
-    "ip" => $ip,
-    "ip_type" => $ip_type,
-    "country" => $country
-];
-?>
-<div>
-    IP : <span class="highlight"><?php echo $geo["ip"] ?></span>
-<div>
-</div>
-    IP type : <span class="highlight"><?php echo $geo["ip_type"] ?></span>
-<div>
-</div>
-    Geo: <span class="highlight"><?php echo $geo["country"]; ?></span>
-</div>
-<?php
-    function browser($value='')
-    {
-        if ( ! isset($_SERVER['HTTP_USER_AGENT'])) {
-           return 'unknown browser';
-        }
+    <h1>Version: 0.20200305 Beta</h1>
+    <ul>
+        <li>
+            <h2>USER AGENT:</h2>
+            <?php echo $_SERVER['HTTP_USER_AGENT']; ?>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <h2>IP:</h2>
+            <?php echo $geo["ip"] ?>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <h2>Browser:</h2>
+            <?php echo browser(); ?>
+        </li>
+        <li>
+            <h2>Browser(js):</h2>
+            <span id="browser"></span>
+        </li>
+        <li>
+            <h2>Device Type:</h2>
+            <span id="device_type"></span>
+        </li>
+        <li>
+            <h2>Device OS:</h2>
+            <?php echo $devide_os; ?>
+        </li>
+        <li>
+            <h2>Device OS(js):</h2>
+            <span id="device_os"></span>
+        </li>
+        <li>
+            <h2>OS Version:</h2>
+            <span id="os_ver"></span>
+        </li>
+        <li>
+            <h2>brand:</h2>
+            <?php echo $brand; ?>
+        </li>
+        <li>
+            <h2>brand(js):</h2>
+            <span id="brand"></span>
+        </li>
+    </ul>
+    <ul>
+        <li>
+            <h2>Orientation(js):</h2>
+            <span id="ori"></span>
+        </li>
+        <li>
+            <h2>Orientation(media-query):</h2>
+            <span id="orientation"></span>
+        </li>
+        <li>
+            <h2>Retina(media-query):</h2>
+            <span id="retina"></span>
+        </li>
+        <li>
+            <h2>Width:</h2>
+            <span id="w"></span>
+        </li>
+        <li>
+            <h2>Height:</h2>
+            <span id="h"></span>
+        </li>
+    </ul>
 
-        $agent = $_SERVER['HTTP_USER_AGENT'];
-
-        if (strpos($agent, 'Edge') > 0) {
-            return 'Edge';
-        }
-        if (strpos($agent, 'OPR') > 0) {
-            return 'Opera';
-        }
-        if (strpos($agent, 'Opera') > 0) {
-            return 'Opera';
-        }
-        if (strpos($agent, 'Firefox') > 0) {
-            return 'Firefox';
-        }
-        if (strpos($agent, 'Chrome') > 0) {
-            return 'Chrome';
-        }
-        if(strpos($agent, 'CriOS') > 0 && preg_match('/iphone|ipod|ipad/i', $agent)) {
-            return 'Chrome';
-        }
-        if (strpos($agent, 'Safari') > 0) {
-            return 'Safari';
-        }
-        if (strpos($agent, 'MSIE 7') > 0) {
-            return 'IE7';
-        }
-        if (strpos($agent, 'MSIE 8') > 0) {
-            return 'IE8';
-        }
-        if (strpos($agent, 'MSIE 9') > 0) {
-            return 'IE9';
-        }
-        if (strpos($agent, 'MSIE 10') > 0) {
-            return 'IE10';
-        }
-        if (strpos($agent, 'like Gecko') > 0) {
-            return 'IE11';
-        }
-        if (strpos($agent, 'MSIE') > 0) {
-            return 'IE';
-        }
-
-        return 'unknown browser';
-    }
-    // echo "Browser : ". browser();
-?>
-<div>
-    Browser : <span class="highlight"><?php echo browser(); ?></span>
-</div>
-<div>
-    Browser(js) : <span id="browser" class="highlight"></span>
-</div>
-<div>
-    <div>Device Type : <span id="device_type" class="highlight"></span></div>
-    <div>Orientation(js) : <span id="ori" class="highlight"></span></div>
-    <div>Orientation(media-query) : <span id="orientation" class="highlight"></span></div>
-    <div>Retina : <span id="retina" class="highlight"></span></div>
-    <div>Device OS : <span id="device_os" class="highlight"></span></div>
-    <div>OS Version: <span id="os_ver" class="highlight"></span></div>
-</div>
-<div>
-    Width : <span id="w" class="highlight"></span>
-    <br>
-    Height : <span id="h" class="highlight"></span>
-</div>
 </body>
-<script type="text/javascript">
-    $(document).ready(function() {
-        win_size();
-        function win_size() {
-            var h=window.document.documentElement.clientHeight;
-            var w=window.document.documentElement.clientWidth;
-            $("#h").html(h);
-            $("#w").html(w);
-        };
-        $(window).resize(function() {
-            win_size();
-        });
+<script>
+    function windowSize() {
+        var w=window.document.documentElement.clientWidth;
+        var h=window.document.documentElement.clientHeight;
+        document.querySelector('#w').innerText = w;
+        document.querySelector('#h').innerText = h;
+    };
+    windowSize();
+    window.addEventListener('resize', function () {
+        windowSize();
     });
-</script>
-<script type="text/javascript">
-    var deviceTypeBoolean = [device.mobile(), device.tablet(), device.desktop()],
-        deviceType = ['mobile', 'tablet', 'desktop'],
-        orientationBoolean = [device.portrait(), device.landscape()],
-        ori = ['portrait', 'landscape'],
-        deviceOsBoolean = [device.mac(), device.ipad(), device.iphone(), device.ipod(), device.android(), device.androidTablet(), device.blackberryTablet(), device.fxos(), device.fxosPhone(), device.fxosTablet(), device.windows(), device.windowsPhone(), device.windowsTablet()],
-        deviceOs = ['Mac OS X', 'ipad(iOS)', 'iphone(iOS)', 'ipod(iOS)', 'Android', 'AndroidTablet', 'BlackberryTablet', 'fxos', 'fxosPhone', 'fxosTablet', 'Windows', 'WindowsPhone', 'WindowsTablet'],
-        osVersion;
-    if (device.ipad() || device.iphone() || device.ipod()) {
+
+    document.querySelector('#browser').innerText = browser();
+
+    var md = new MobileDetect(window.navigator.userAgent);
+
+    var deviceType = '';
+    if (md.mobile()) {
+        deviceType = 'mobile';
+    } else if (md.tablet()) {
+        deviceType = 'tablet';
+    } else {
+        deviceType = 'desktop';
+    }
+    document.querySelector('#device_type').innerText = deviceType;
+
+    document.querySelector('#device_os').innerText = md.os();
+
+    var osVersion = '';
+    if (md.is('AndroidOS')) {
+        osVersion = (navigator.userAgent).match(/Android\s+([\d\.]+)/i);
+        osVersion = osVersion[0];
+        osVersion = osVersion.replace('Android ', '');
+    }
+    if (md.is('iOS')) {
         osVersion = (navigator.userAgent).match(/OS\s+([\d\_]+)/i);
         osVersion = osVersion[0];
         osVersion = osVersion.replace(/_/g, '.');
         osVersion = osVersion.replace('OS ', '');
     }
-    if (device.android() || device.androidTablet()) {
-        osVersion = (navigator.userAgent).match(/Android\s+([\d\.]+)/i);
-        osVersion = osVersion[0];
-        osVersion = osVersion.replace('Android ', '');
-    }
-    os_ver.innerHTML = osVersion;
-    for (var i = 0; i < deviceTypeBoolean.length; i++) {
-        if (deviceTypeBoolean[i]) {
-            $('#device_type').html(deviceType[i]);
-        }
-    }
-    for (var j = 0; j < orientationBoolean.length; j++) {
-        if (orientationBoolean[j]) {
-            $('#ori').html(ori[j]);
-        }
-    }
-    for (var k = 0; k < deviceOsBoolean.length; k++) {
-        if (deviceOsBoolean[k]) {
-            $('#device_os').html(deviceOs[k]);
-        }
-    }
+    document.querySelector('#os_ver').innerText = osVersion;
 
-    // function browser() {
-    //     var agent = navigator.userAgent;
-    //     if (agent.search('Edge') > 0) {
-    //         return 'Edge';
-    //     }
-    //     if (agent.search('OPR') > 0) {
-    //         return 'Opera';
-    //     }
-    //     if (agent.search('Opera') > 0) {
-    //         return 'Opera';
-    //     }
-    //     if (agent.search('Firefox') > 0) {
-    //         return 'Firefox';
-    //     }
-    //     if (agent.search('Chrome') > 0) {
-    //         return 'Chrome';
-    //     }
-    //     // check iOS chrome
-    //     if(/CriOS/i.test(agent) && /iphone|ipod|ipad/i.test(agent)) {
-    //         return 'Chrome';
-    //     }
-    //     if (agent.search('Safari') > 0) {
-    //         return 'Safari';
-    //     }
-    //     if (agent.search('MSIE 7') > 0) {
-    //         return 'IE7';
-    //     }
-    //     if (agent.search('MSIE 8') > 0) {
-    //         return 'IE8';
-    //     }
-    //     if (agent.search('MSIE 9') > 0) {
-    //         return 'IE9';
-    //     }
-    //     if (agent.search('MSIE 10') > 0) {
-    //         return 'IE10';
-    //     }
-    //     if (agent.search('like Gecko') > 0) {
-    //         return 'IE11';
-    //     }
-    //     if (agent.search('MSIE') > 0) {
-    //         return 'IE';
-    //     }
-    //     return 'unknown browser';
-    // }
-    $('#browser').html(browser());
+    var brand = md.phone() || md.tablet();
+    document.querySelector('#brand').innerText = brand;
+</script>
 
-
-
-
-
-function browser() {
-
-    var _that = this,
-        currentBrowser = 'unknown browser',
-        ua = navigator.userAgent,
-        agentArray = [
-            {
-                agent: ua.search('Edge'),
-                browser: 'Edge'
-            },
-            {
-                agent: ua.search('OPR'),
-                browser: 'Opera'
-            },
-            {
-                agent: ua.search('Opera'),
-                browser: 'Opera'
-            },
-            {
-                agent: ua.search('Firefox'),
-                browser: 'Firefox'
-            },
-            {
-                agent: ua.search('Chrome'),
-                browser: 'Chrome'
-            },
-            {
-                agent: /CriOS/i.test(ua) && /iphone|ipod|ipad/i.test(ua), // check iOS chrome
-                browser: 'Chrome'
-            },
-            {
-                agent: ua.search('Safari'),
-                browser: 'Safari'
-            },
-            {
-                agent: ua.search('MSIE 7'),
-                browser: 'IE7'
-            },
-            {
-                agent: ua.search('MSIE 8'),
-                browser: 'IE8'
-            },
-            {
-                agent: ua.search('MSIE 9'),
-                browser: 'IE9'
-            },
-            {
-                agent: ua.search('MSIE 10'),
-                browser: 'IE10'
-            },
-            {
-                agent: ua.search('like Gecko'),
-                browser: 'IE11'
-            },
-            {
-                agent: ua.search('MSIE'),
-                browser: 'IE'
-            }
-        ];
-    for (var i = 0; i < agentArray.length; i++) {
-        _that[agentArray[i].browser.toLowerCase()] = false;
-    }
-    for (var j = 0; j < agentArray.length; j++) {
-        if (agentArray[j].agent > 0 || agentArray[j].agent === true) {
-            _that[agentArray[j].browser.toLowerCase()] = true;
-            currentBrowser = agentArray[j].browser;
-            break;
-        }
-    }
-    return currentBrowser;
-}
-
-console.log(browser());
+<script type="text/javascript">
 
 window.addEventListener("deviceorientation", handleOrientation, true);
 
